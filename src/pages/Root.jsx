@@ -35,7 +35,7 @@ function Root() {
   const [showContactPage, setShowContactPage] = useState(false); // Add Contact page state
   const [showBulkOrderPage, setShowBulkOrderPage] = useState(false); // Add BulkOrderPage state
   const [previousPage, setPreviousPage] = useState('home');
-  const [initialCategoryFilters, setInitialCategoryFilters] = useState({ brand: [], subSubcategory: [], productType: [] });
+  const [initialCategoryFilters, setInitialCategoryFilters] = useState({ brand: [], subcategory: [], subSubcategory: [], productType: [] });
   const [rawSource, setRawSource] = useState([]);
   
   // --- Hash navigation helpers ---
@@ -117,13 +117,14 @@ function Root() {
             const type = rest[2];
             const valueParam = rest[3];
             const value = decodeURIComponent(valueParam || '');
-            const next = { brand: [], subSubcategory: [], productType: [] };
+            const next = { brand: [], subcategory: [], subSubcategory: [], productType: [] };
             if (type === 'brand') next.brand = [value];
+            if (type === 'subcategory') next.subcategory = [value];
             if (type === 'sub-subcategory') next.subSubcategory = [value];
             if (type === 'product-type') next.productType = [value];
             setInitialCategoryFilters(next);
           } else {
-            setInitialCategoryFilters({ brand: [], subSubcategory: [], productType: [] });
+            setInitialCategoryFilters({ brand: [], subcategory: [], subSubcategory: [], productType: [] });
           }
           setShowCategoryList(true);
         }
@@ -688,12 +689,13 @@ function Root() {
               const a = p.anchor || {};
               const target = slugify(selectedCategoryForList || '');
               const matchesCategory = product.category && slugify(product.category) === target;
+              const matchesTopCategory = a.category && slugify(a.category) === target;
               const matchesSubcategory = slugify(a.subcategory || '') === target;
               const matchesSubSubcategory = slugify(a.subSubcategory || '') === target;
               const matchesBrand = slugify(a.brand || '') === target;
               const matchesManufacturer = slugify(a.manufacturer || '') === target;
               const matchesProductType = slugify(a.productType || '') === target;
-              return matchesCategory || matchesSubcategory || matchesSubSubcategory || matchesBrand || matchesManufacturer || matchesProductType;
+              return matchesCategory || matchesTopCategory || matchesSubcategory || matchesSubSubcategory || matchesBrand || matchesManufacturer || matchesProductType;
             })}
             onBack={handleBackFromCategoryList}
             onAddToCart={handleAddToCart}
@@ -739,16 +741,22 @@ function Root() {
           <>
             {!searchQuery && !selectedCategory && (
               <Home 
-                products={products
+                products={[...products]
                   .filter(p => {
                     const oldP = parseFloat(p['old-price']);
                     const newP = parseFloat(p['new-price']);
-                    if (!isFinite(oldP) || oldP <= 0) return false;
-                    if (!isFinite(newP) || newP <= 0) return false;
-                    const disc = Math.round(((oldP - newP) / oldP) * 100);
-                    return disc >= 15;
+                    return isFinite(oldP) && oldP > 0 && isFinite(newP) && newP > 0 && newP < oldP;
                   })
-                  .slice(0, 8)}
+                  .sort((a, b) => {
+                    const aOld = parseFloat(a['old-price']);
+                    const aNew = parseFloat(a['new-price']);
+                    const bOld = parseFloat(b['old-price']);
+                    const bNew = parseFloat(b['new-price']);
+                    const aDisc = ((aOld - aNew) / aOld) * 100;
+                    const bDisc = ((bOld - bNew) / bOld) * 100;
+                    return bDisc - aDisc;
+                  })
+                  .slice(0, 12)}
                 allProducts={products}
                 onAddToCart={handleAddToCart}
                 onAddToWishlist={handleAddToWishlist}

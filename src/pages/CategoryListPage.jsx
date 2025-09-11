@@ -25,12 +25,29 @@ const CategoryListPage = ({
   const [sortedProducts, setSortedProducts] = React.useState(products);
   const [showFilters, setShowFilters] = React.useState(false);
   const [isDesktop, setIsDesktop] = React.useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
+  const subcategorySectionRef = React.useRef(null);
 
   React.useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Ensure subcategory filter is visible when arriving on category page
+  React.useEffect(() => {
+    // Auto-open filters on mobile and scroll to subcategory section
+    if (!isDesktop) {
+      setShowFilters(true);
+    }
+    const id = window.setTimeout(() => {
+      try {
+        if (subcategorySectionRef.current) {
+          subcategorySectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } catch (_) {}
+    }, 150);
+    return () => window.clearTimeout(id);
+  }, [isDesktop]);
   
   // Derived prices
   const allPrices = React.useMemo(() => products.map(p => parseInt(p['new-price']) || 0).filter(n => !isNaN(n)), [products]);
@@ -41,6 +58,7 @@ const CategoryListPage = ({
   const [priceRange, setPriceRange] = React.useState([minPrice, maxPrice]);
   const [selectedBrands, setSelectedBrands] = React.useState(initialFilters?.brand || []);
   const [selectedProductTypes, setSelectedProductTypes] = React.useState(initialFilters?.productType || []);
+  const [selectedSubcategories, setSelectedSubcategories] = React.useState(initialFilters?.subcategory || []);
   const [selectedSubSubcategories, setSelectedSubSubcategories] = React.useState(initialFilters?.subSubcategory || []);
   const [selectedPowerRanges, setSelectedPowerRanges] = React.useState([]);
   const [selectedColors, setSelectedColors] = React.useState([]);
@@ -58,10 +76,12 @@ const CategoryListPage = ({
     if (initialFilters) {
       setSelectedBrands(initialFilters.brand || []);
       setSelectedProductTypes(initialFilters.productType || []);
+      setSelectedSubcategories(initialFilters.subcategory || []);
       setSelectedSubSubcategories(initialFilters.subSubcategory || []);
     } else {
       setSelectedBrands([]);
       setSelectedProductTypes([]);
+      setSelectedSubcategories([]);
       setSelectedSubSubcategories([]);
     }
     // Reset pagination on filter context change
@@ -96,6 +116,15 @@ const CategoryListPage = ({
       return productType;
     });
     return [...new Set(productTypes)].sort();
+  };
+
+  // Get unique subcategories from products
+  const getUniqueSubcategories = () => {
+    const subcategories = products.map(product => {
+      const subcategory = product.raw?.anchor?.subcategory || 'Unknown Subcategory';
+      return subcategory;
+    });
+    return [...new Set(subcategories)].sort();
   };
 
   // Get unique sub-subcategories from products
@@ -229,6 +258,7 @@ const CategoryListPage = ({
 
   const brands = getUniqueBrands();
   const productTypes = getUniqueProductTypes();
+  const subcategories = getUniqueSubcategories();
   const subSubcategories = getUniqueSubSubcategories();
   const powerRanges = getUniquePowerRanges();
   const colors = getUniqueColors();
@@ -262,6 +292,14 @@ const CategoryListPage = ({
       filtered = filtered.filter(product => {
         const productType = product.raw?.anchor?.productType || 'Unknown Type';
         return selectedProductTypes.includes(productType);
+      });
+    }
+
+    // Subcategory filter
+    if (selectedSubcategories.length > 0) {
+      filtered = filtered.filter(product => {
+        const subcategory = product.raw?.anchor?.subcategory || 'Unknown Subcategory';
+        return selectedSubcategories.includes(subcategory);
       });
     }
 
@@ -399,7 +437,7 @@ const CategoryListPage = ({
     setFilteredProducts(filtered);
     setCurrentPage(1);
   }, [products, priceRange, selectedBrands, selectedProductTypes, 
-      selectedSubSubcategories, selectedPowerRanges,
+      selectedSubcategories, selectedSubSubcategories, selectedPowerRanges,
       selectedColors, selectedSizes, selectedMaterials, selectedCertifications, selectedWarranties,
       showOnlyDiscounted, selectedDiscountBucket, showOnlyInStock]);
 
@@ -451,6 +489,14 @@ const CategoryListPage = ({
       prev.includes(productType) 
         ? prev.filter(pt => pt !== productType)
         : [...prev, productType]
+    );
+  };
+
+  const handleSubcategoryToggle = (subcategory) => {
+    setSelectedSubcategories(prev => 
+      prev.includes(subcategory) 
+        ? prev.filter(sc => sc !== subcategory)
+        : [...prev, subcategory]
     );
   };
 
@@ -514,6 +560,7 @@ const CategoryListPage = ({
     setPriceRange([minPrice, maxPrice]);
     setSelectedBrands([]);
     setSelectedProductTypes([]);
+    setSelectedSubcategories([]);
     setSelectedSubSubcategories([]);
     setSelectedPowerRanges([]);
     setSelectedColors([]);
@@ -547,6 +594,11 @@ const CategoryListPage = ({
     type: 'productType',
     label: pt,
     onRemove: () => setSelectedProductTypes(prev => prev.filter(x => x !== pt))
+  }));
+  selectedSubcategories.forEach(sc => chips.push({
+    type: 'subcategory',
+    label: sc,
+    onRemove: () => setSelectedSubcategories(prev => prev.filter(x => x !== sc))
   }));
   selectedSubSubcategories.forEach(ssc => chips.push({
     type: 'subSubcategory',
@@ -724,6 +776,8 @@ const CategoryListPage = ({
                     setBrandQuery={setBrandQuery}
                     selectedProductTypes={selectedProductTypes}
                     handleProductTypeToggle={handleProductTypeToggle}
+                    selectedSubcategories={selectedSubcategories}
+                    handleSubcategoryToggle={handleSubcategoryToggle}
                     selectedSubSubcategories={selectedSubSubcategories}
                     handleSubSubcategoryToggle={handleSubSubcategoryToggle}
                     selectedPowerRanges={selectedPowerRanges}
@@ -746,6 +800,7 @@ const CategoryListPage = ({
                     setShowOnlyInStock={setShowOnlyInStock}
                     brands={brands}
                     productTypes={productTypes}
+                    subcategories={subcategories}
                     subSubcategories={subSubcategories}
                     powerRanges={powerRanges}
                     colors={colors}
@@ -755,6 +810,7 @@ const CategoryListPage = ({
                     warranties={warranties}
                     clearAllFilters={clearAllFilters}
                     activeFiltersCount={activeFiltersCount}
+                    subcategorySectionRef={subcategorySectionRef}
                   />
                 </div>
               </div>
@@ -776,6 +832,8 @@ const CategoryListPage = ({
                   setBrandQuery={setBrandQuery}
                   selectedProductTypes={selectedProductTypes}
                   handleProductTypeToggle={handleProductTypeToggle}
+                  selectedSubcategories={selectedSubcategories}
+                  handleSubcategoryToggle={handleSubcategoryToggle}
                   selectedSubSubcategories={selectedSubSubcategories}
                   handleSubSubcategoryToggle={handleSubSubcategoryToggle}
                   selectedPowerRanges={selectedPowerRanges}
@@ -798,6 +856,7 @@ const CategoryListPage = ({
                   setShowOnlyInStock={setShowOnlyInStock}
                   brands={brands}
                   productTypes={productTypes}
+                  subcategories={subcategories}
                   subSubcategories={subSubcategories}
                   powerRanges={powerRanges}
                   colors={colors}
@@ -807,6 +866,7 @@ const CategoryListPage = ({
                   warranties={warranties}
                   clearAllFilters={clearAllFilters}
                   activeFiltersCount={activeFiltersCount}
+                  subcategorySectionRef={subcategorySectionRef}
                 />
               </div>
             </div>
@@ -1032,6 +1092,8 @@ const FilterPanel = ({
   setBrandQuery,
   selectedProductTypes,
   handleProductTypeToggle,
+  selectedSubcategories,
+  handleSubcategoryToggle,
   selectedSubSubcategories,
   handleSubSubcategoryToggle,
   selectedPowerRanges,
@@ -1054,6 +1116,7 @@ const FilterPanel = ({
   setShowOnlyInStock,
   brands,
   productTypes,
+  subcategories,
   subSubcategories,
   powerRanges,
   colors,
@@ -1062,7 +1125,8 @@ const FilterPanel = ({
   certifications,
   warranties,
   clearAllFilters,
-  activeFiltersCount
+  activeFiltersCount,
+  subcategorySectionRef
 }) => {
   const [showAllBrands, setShowAllBrands] = React.useState(false);
   const filteredBrands = brands.filter(b => b.toLowerCase().includes(brandQuery.toLowerCase()));
@@ -1187,6 +1251,35 @@ const FilterPanel = ({
                   )}
                 </div>
                 <span className="text-sm text-gray-700">{productType}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Subcategory Filter */}
+      {subcategories.length > 0 && (
+        <div ref={subcategorySectionRef} className="border-b border-gray-200 pb-6">
+          <h3 className="text-sm font-medium text-gray-900 mb-3">Subcategory</h3>
+          <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+            {subcategories.map((subcategory) => (
+              <label key={subcategory} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedSubcategories.includes(subcategory)}
+                  onChange={() => handleSubcategoryToggle(subcategory)}
+                  className="sr-only"
+                />
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
+                  selectedSubcategories.includes(subcategory) 
+                    ? 'bg-blue-900 border-blue-900' 
+                    : 'border-gray-300'
+                }`}>
+                  {selectedSubcategories.includes(subcategory) && (
+                    <Check className="w-3 h-3 text-white" />
+                  )}
+                </div>
+                <span className="text-sm text-gray-700">{subcategory}</span>
               </label>
             ))}
           </div>
