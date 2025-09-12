@@ -19,7 +19,7 @@ function Root() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [showCartPage, setShowCartPage] = useState(false);
-  const [showCheckoutPage, setShowCheckoutPage] = useState(false);  
+  const [showCheckoutPage, setShowCheckoutPage] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -37,7 +37,7 @@ function Root() {
   const [previousPage, setPreviousPage] = useState('home');
   const [initialCategoryFilters, setInitialCategoryFilters] = useState({ brand: [], subcategory: [], subSubcategory: [], productType: [] });
   const [rawSource, setRawSource] = useState([]);
-  
+
   // --- Hash navigation helpers ---
   const slugify = (text) => {
     return String(text || '')
@@ -171,28 +171,33 @@ function Root() {
         break;
       }
       case 'product': {
-        const productSlug = rest[0] || '';
-        if (productSlug && products.length) {
-          const found = products.find(p => slugify(p['product-title']) === productSlug);
+        const categoryParam = rest[0] || '';
+        const productId = rest[1] || '';
+        const productSlug = rest[2] || '';
+      
+        if (products.length) {
+          const found = products.find(p => {
+            const matchId = productId && (p.raw?.identifiers?.productId === productId || String(p.id) === productId);
+            const matchSlug = (p.raw?.identifiers?.slug || slugify(p['product-title'])) === productSlug;
+            return matchId && matchSlug;
+          });
+      
           if (found) {
             setSelectedProduct(found);
             setShowProductDetailsPage(true);
           }
         }
         break;
-      }
+      }      
       case 'home':
       default:
         // Home/reset
         setInitialCategoryFilters({ brand: [], subSubcategory: [], productType: [] });
         break;
     }
-    
     // Scroll to top after navigation
     scrollToTop();
   };
-
-  
 
   const getProductCategory = (title) => {
     const titleLower = title.toLowerCase();
@@ -415,13 +420,13 @@ function Root() {
   };
 
   const handleCheckout = () => {
-    if(currentUser) {
+    if (currentUser) {
       setShowCheckoutPage(true);
       setHash('checkout');
       scrollToTop();
     } else {
       setIsLoginOpen(true);
-    }
+    }
   };
 
   const handleOrderComplete = () => {
@@ -574,7 +579,13 @@ function Root() {
     }
     setSelectedProduct(product);
     setShowProductDetailsPage(true);
-    setHash(`product/${slugify(product['product-title'])}`);
+    const productId = product.raw?.identifiers?.productId || product.id || '';
+    const productSlug = product.raw?.identifiers?.slug || slugify(product['product-title']);
+    const productCategory = product.category
+      ? slugify(product.category)
+      : slugify(product.raw?.anchor?.category || 'general');
+    // Final URL format: product/<category>/<id>/<slug>
+    setHash(`product/${productCategory}/${productId}/${productSlug}`);
     scrollToTop();
   };
 
@@ -633,12 +644,12 @@ function Root() {
           currentUser={currentUser || undefined}
         />
       )}
-              <main className={isLoginOpen ? "" : "pt-16 md:pt-20"}>
-          {isLoginOpen ? (
-            <LoginPage
-              onLoginSuccess={handleLoginSuccess}
-            />
-          ) : showAboutPage ? (
+      <main className={isLoginOpen ? "" : "pt-16 md:pt-20"}>
+        {isLoginOpen ? (
+          <LoginPage
+            onLoginSuccess={handleLoginSuccess}
+          />
+        ) : showAboutPage ? (
           <About />
         ) : showContactPage ? (
           <Contact />
@@ -646,14 +657,14 @@ function Root() {
           <BulkOrderPage />
         ) : showCartPage ? (
           <CartPage
-          items={cartItems}
-          onBack={() => setShowCartPage(false)}
-          onUpdateQuantity={handleUpdateQuantity}
-          onRemoveItem={handleRemoveItem}
-          onLoginClick={handleLoginClick}
-          onCheckout={handleCheckout}
-          onOpenDetails={handleOpenProductDetailsPage}
-        />
+            items={cartItems}
+            onBack={() => setShowCartPage(false)}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveItem}
+            onLoginClick={handleLoginClick}
+            onCheckout={handleCheckout}
+            onOpenDetails={handleOpenProductDetailsPage}
+          />
         ) : showCheckoutPage ? (
           <CheckoutPage
             items={cartItems}
@@ -740,23 +751,17 @@ function Root() {
         ) : (
           <>
             {!searchQuery && !selectedCategory && (
-              <Home 
-                products={[...products]
+              <Home
+                products={products
                   .filter(p => {
                     const oldP = parseFloat(p['old-price']);
                     const newP = parseFloat(p['new-price']);
-                    return isFinite(oldP) && oldP > 0 && isFinite(newP) && newP > 0 && newP < oldP;
+                    if (!isFinite(oldP) || oldP <= 0) return false;
+                    if (!isFinite(newP) || newP <= 0) return false;
+                    const disc = Math.round(((oldP - newP) / oldP) * 100);
+                    return disc >= 15;
                   })
-                  .sort((a, b) => {
-                    const aOld = parseFloat(a['old-price']);
-                    const aNew = parseFloat(a['new-price']);
-                    const bOld = parseFloat(b['old-price']);
-                    const bNew = parseFloat(b['new-price']);
-                    const aDisc = ((aOld - aNew) / aOld) * 100;
-                    const bDisc = ((bOld - bNew) / bOld) * 100;
-                    return bDisc - aDisc;
-                  })
-                  .slice(0, 12)}
+                  .slice(0, 8)}
                 allProducts={products}
                 onAddToCart={handleAddToCart}
                 onAddToWishlist={handleAddToWishlist}
@@ -767,23 +772,28 @@ function Root() {
               />
             )}
             {(searchQuery || selectedCategory) && (
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-                <button
-                  onClick={handleReturnToHome}
-                  className="mb-6 px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors flex items-center space-x-2"
-                >
-                  <span>←</span>
-                  <span>Back to Home</span>
-                </button>
-              </div>
-            )}
-            {(searchQuery || selectedCategory) && (
-              <section className="py-16 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">{getGridTitle()}</h2>
-                    <div className="w-24 h-1 bg-yellow-400 mx-auto"></div>
+              <div className="min-h-screen bg-gray-50">
+                {/* Header */}
+                <div className="bg-white shadow-sm border-b">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
+                      <button
+                        onClick={handleReturnToHome}
+                        className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm md:text-base"
+                      >
+                        <svg className="w-4 h-4 md:w-5 md:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span>Back</span>
+                      </button>
+                      <h1 className="text-lg font-semibold text-gray-900">{getGridTitle()}</h1>
+                      <div className="w-32" />
+                    </div>
                   </div>
+                </div>
+
+                {/* Content */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredProducts.map((product, index) => (
                       <div key={`${product['product-title']}-${index}`} className="cursor-pointer">
@@ -798,7 +808,7 @@ function Root() {
                     ))}
                   </div>
                 </div>
-              </section>
+              </div>
             )}
           </>
         )}

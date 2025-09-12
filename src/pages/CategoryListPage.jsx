@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { ArrowLeft, Grid, List, Filter, X, Check } from 'lucide-react';
 
-const CategoryListPage = ({ 
-  category, 
-  products, 
-  onBack, 
-  onAddToCart, 
-  onAddToWishlist, 
+const CategoryListPage = ({
+  category,
+  products,
+  onBack,
+  onAddToCart,
+  onAddToWishlist,
   onOpenDetails,
   favorites = [],
   initialFilters
@@ -44,11 +44,11 @@ const CategoryListPage = ({
         if (subcategorySectionRef.current) {
           subcategorySectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-      } catch (_) {}
+      } catch (_) { }
     }, 150);
     return () => window.clearTimeout(id);
   }, [isDesktop]);
-  
+
   // Derived prices
   const allPrices = React.useMemo(() => products.map(p => parseInt(p['new-price']) || 0).filter(n => !isNaN(n)), [products]);
   const minPrice = React.useMemo(() => (allPrices.length ? Math.min(...allPrices) : 0), [allPrices]);
@@ -141,8 +141,8 @@ const CategoryListPage = ({
     const powerRanges = [];
     products.forEach(product => {
       const specs = product.raw?.characteristics?.specifications || [];
-      const powerSpec = specs.find(spec => 
-        spec.name?.toLowerCase().includes('power') || 
+      const powerSpec = specs.find(spec =>
+        spec.name?.toLowerCase().includes('power') ||
         spec.name?.toLowerCase().includes('watt') ||
         spec.name?.toLowerCase().includes('wattage')
       );
@@ -173,8 +173,8 @@ const CategoryListPage = ({
       });
       // Also check specifications for color info
       const specs = product.raw?.characteristics?.specifications || [];
-      const colorSpec = specs.find(spec => 
-        spec.name?.toLowerCase().includes('color') || 
+      const colorSpec = specs.find(spec =>
+        spec.name?.toLowerCase().includes('color') ||
         spec.name?.toLowerCase().includes('colour')
       );
       if (colorSpec && colorSpec.value) {
@@ -196,8 +196,8 @@ const CategoryListPage = ({
       });
       // Also check specifications for size info
       const specs = product.raw?.characteristics?.specifications || [];
-      const sizeSpec = specs.find(spec => 
-        spec.name?.toLowerCase().includes('size') || 
+      const sizeSpec = specs.find(spec =>
+        spec.name?.toLowerCase().includes('size') ||
         spec.name?.toLowerCase().includes('dimension')
       );
       if (sizeSpec && sizeSpec.value) {
@@ -212,8 +212,8 @@ const CategoryListPage = ({
     const materials = [];
     products.forEach(product => {
       const specs = product.raw?.characteristics?.specifications || [];
-      const materialSpec = specs.find(spec => 
-        spec.name?.toLowerCase().includes('material') || 
+      const materialSpec = specs.find(spec =>
+        spec.name?.toLowerCase().includes('material') ||
         spec.name?.toLowerCase().includes('construction')
       );
       if (materialSpec && materialSpec.value) {
@@ -228,8 +228,8 @@ const CategoryListPage = ({
     const certifications = [];
     products.forEach(product => {
       const specs = product.raw?.characteristics?.specifications || [];
-      const certSpec = specs.find(spec => 
-        spec.name?.toLowerCase().includes('certification') || 
+      const certSpec = specs.find(spec =>
+        spec.name?.toLowerCase().includes('certification') ||
         spec.name?.toLowerCase().includes('standard') ||
         spec.name?.toLowerCase().includes('compliance')
       );
@@ -245,8 +245,8 @@ const CategoryListPage = ({
     const warranties = [];
     products.forEach(product => {
       const specs = product.raw?.characteristics?.specifications || [];
-      const warrantySpec = specs.find(spec => 
-        spec.name?.toLowerCase().includes('warranty') || 
+      const warrantySpec = specs.find(spec =>
+        spec.name?.toLowerCase().includes('warranty') ||
         spec.name?.toLowerCase().includes('guarantee')
       );
       if (warrantySpec && warrantySpec.value) {
@@ -315,8 +315,8 @@ const CategoryListPage = ({
     if (selectedPowerRanges.length > 0) {
       filtered = filtered.filter(product => {
         const specs = product.raw?.characteristics?.specifications || [];
-        const powerSpec = specs.find(spec => 
-          spec.name?.toLowerCase().includes('power') || 
+        const powerSpec = specs.find(spec =>
+          spec.name?.toLowerCase().includes('power') ||
           spec.name?.toLowerCase().includes('watt') ||
           spec.name?.toLowerCase().includes('wattage')
         );
@@ -341,15 +341,15 @@ const CategoryListPage = ({
     if (selectedColors.length > 0) {
       filtered = filtered.filter(product => {
         const variants = product.raw?.classification?.variants || [];
-        const hasColorVariant = variants.some(variant => 
+        const hasColorVariant = variants.some(variant =>
           variant.attributes?.color && selectedColors.includes(variant.attributes.color)
         );
         if (hasColorVariant) return true;
-        
+
         // Also check specifications
         const specs = product.raw?.characteristics?.specifications || [];
-        const colorSpec = specs.find(spec => 
-          spec.name?.toLowerCase().includes('color') || 
+        const colorSpec = specs.find(spec =>
+          spec.name?.toLowerCase().includes('color') ||
           spec.name?.toLowerCase().includes('colour')
         );
         return colorSpec && colorSpec.value && selectedColors.includes(colorSpec.value);
@@ -360,15 +360,15 @@ const CategoryListPage = ({
     if (selectedSizes.length > 0) {
       filtered = filtered.filter(product => {
         const variants = product.raw?.classification?.variants || [];
-        const hasSizeVariant = variants.some(variant => 
+        const hasSizeVariant = variants.some(variant =>
           variant.attributes?.size && selectedSizes.includes(variant.attributes.size)
         );
         if (hasSizeVariant) return true;
-        
+
         // Also check specifications
         const specs = product.raw?.characteristics?.specifications || [];
-        const sizeSpec = specs.find(spec => 
-          spec.name?.toLowerCase().includes('size') || 
+        const sizeSpec = specs.find(spec =>
+          spec.name?.toLowerCase().includes('size') ||
           spec.name?.toLowerCase().includes('dimension')
         );
         return sizeSpec && sizeSpec.value && selectedSizes.includes(sizeSpec.value);
@@ -379,8 +379,8 @@ const CategoryListPage = ({
     if (selectedMaterials.length > 0) {
       filtered = filtered.filter(product => {
         const specs = product.raw?.characteristics?.specifications || [];
-        const materialSpec = specs.find(spec => 
-          spec.name?.toLowerCase().includes('material') || 
+        const materialSpec = specs.find(spec =>
+          spec.name?.toLowerCase().includes('material') ||
           spec.name?.toLowerCase().includes('construction')
         );
         return materialSpec && materialSpec.value && selectedMaterials.includes(materialSpec.value);
@@ -391,8 +391,8 @@ const CategoryListPage = ({
     if (selectedCertifications.length > 0) {
       filtered = filtered.filter(product => {
         const specs = product.raw?.characteristics?.specifications || [];
-        const certSpec = specs.find(spec => 
-          spec.name?.toLowerCase().includes('certification') || 
+        const certSpec = specs.find(spec =>
+          spec.name?.toLowerCase().includes('certification') ||
           spec.name?.toLowerCase().includes('standard') ||
           spec.name?.toLowerCase().includes('compliance')
         );
@@ -404,8 +404,8 @@ const CategoryListPage = ({
     if (selectedWarranties.length > 0) {
       filtered = filtered.filter(product => {
         const specs = product.raw?.characteristics?.specifications || [];
-        const warrantySpec = specs.find(spec => 
-          spec.name?.toLowerCase().includes('warranty') || 
+        const warrantySpec = specs.find(spec =>
+          spec.name?.toLowerCase().includes('warranty') ||
           spec.name?.toLowerCase().includes('guarantee')
         );
         return warrantySpec && warrantySpec.value && selectedWarranties.includes(warrantySpec.value);
@@ -436,10 +436,10 @@ const CategoryListPage = ({
 
     setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [products, priceRange, selectedBrands, selectedProductTypes, 
-      selectedSubcategories, selectedSubSubcategories, selectedPowerRanges,
-      selectedColors, selectedSizes, selectedMaterials, selectedCertifications, selectedWarranties,
-      showOnlyDiscounted, selectedDiscountBucket, showOnlyInStock]);
+  }, [products, priceRange, selectedBrands, selectedProductTypes,
+    selectedSubcategories, selectedSubSubcategories, selectedPowerRanges,
+    selectedColors, selectedSizes, selectedMaterials, selectedCertifications, selectedWarranties,
+    showOnlyDiscounted, selectedDiscountBucket, showOnlyInStock]);
 
   React.useEffect(() => {
     let sorted = [...filteredProducts];
@@ -477,80 +477,80 @@ const CategoryListPage = ({
   };
 
   const handleBrandToggle = (brand) => {
-    setSelectedBrands(prev => 
-      prev.includes(brand) 
+    setSelectedBrands(prev =>
+      prev.includes(brand)
         ? prev.filter(b => b !== brand)
         : [...prev, brand]
     );
   };
 
   const handleProductTypeToggle = (productType) => {
-    setSelectedProductTypes(prev => 
-      prev.includes(productType) 
+    setSelectedProductTypes(prev =>
+      prev.includes(productType)
         ? prev.filter(pt => pt !== productType)
         : [...prev, productType]
     );
   };
 
   const handleSubcategoryToggle = (subcategory) => {
-    setSelectedSubcategories(prev => 
-      prev.includes(subcategory) 
+    setSelectedSubcategories(prev =>
+      prev.includes(subcategory)
         ? prev.filter(sc => sc !== subcategory)
         : [...prev, subcategory]
     );
   };
 
   const handleSubSubcategoryToggle = (subSubcategory) => {
-    setSelectedSubSubcategories(prev => 
-      prev.includes(subSubcategory) 
+    setSelectedSubSubcategories(prev =>
+      prev.includes(subSubcategory)
         ? prev.filter(ssc => ssc !== subSubcategory)
         : [...prev, subSubcategory]
     );
   };
 
   const handlePowerRangeToggle = (powerRange) => {
-    setSelectedPowerRanges(prev => 
-      prev.includes(powerRange) 
+    setSelectedPowerRanges(prev =>
+      prev.includes(powerRange)
         ? prev.filter(pr => pr !== powerRange)
         : [...prev, powerRange]
     );
   };
 
   const handleColorToggle = (color) => {
-    setSelectedColors(prev => 
-      prev.includes(color) 
+    setSelectedColors(prev =>
+      prev.includes(color)
         ? prev.filter(c => c !== color)
         : [...prev, color]
     );
   };
 
   const handleSizeToggle = (size) => {
-    setSelectedSizes(prev => 
-      prev.includes(size) 
+    setSelectedSizes(prev =>
+      prev.includes(size)
         ? prev.filter(s => s !== size)
         : [...prev, size]
     );
   };
 
   const handleMaterialToggle = (material) => {
-    setSelectedMaterials(prev => 
-      prev.includes(material) 
+    setSelectedMaterials(prev =>
+      prev.includes(material)
         ? prev.filter(m => m !== material)
         : [...prev, material]
     );
   };
 
   const handleCertificationToggle = (certification) => {
-    setSelectedCertifications(prev => 
-      prev.includes(certification) 
+    setSelectedCertifications(prev =>
+      prev.includes(certification)
         ? prev.filter(c => c !== certification)
         : [...prev, certification]
     );
   };
 
   const handleWarrantyToggle = (warranty) => {
-    setSelectedWarranties(prev => 
-      prev.includes(warranty) 
+    setSelectedWarranties(prev =>
+      prev.includes(warranty)
         ? prev.filter(w => w !== warranty)
         : [...prev, warranty]
     );
@@ -672,13 +672,13 @@ const CategoryListPage = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
             <div className="flex items-center space-x-3 md:space-x-4">
-            <button 
-              onClick={() => window.history.back()}
-              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm md:text-base"
-            >
-              <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-              <span>Back</span>
-            </button>
+              <button
+                onClick={() => window.history.back()}
+                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm md:text-base"
+              >
+                <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                <span>Back</span>
+              </button>
               <div className="h-5 md:h-6 w-px bg-gray-300"></div>
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-gray-900">{formatCategoryTitle(category)}</h1>
@@ -714,7 +714,7 @@ const CategoryListPage = ({
                   <option value="price-high">Price: High to Low</option>
                 </select>
               </div>
-              
+
               <div className="hidden sm:flex border border-gray-300 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
@@ -898,14 +898,14 @@ const CategoryListPage = ({
                   <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setCurrentPage} />
                 </div>
 
-                <div className={viewMode === 'grid' 
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10" 
+                <div className={viewMode === 'grid'
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols- gap-6 md:gap-8 lg:gap-10"
                   : "space-y-4"
                 }>
                   {pageProducts.map((product, index) => (
                     <div
                       key={index}
-                      className={viewMode === 'grid' 
+                      className={viewMode === 'grid'
                         ? "bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group cursor-pointer"
                         : "bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer"
                       }
@@ -914,15 +914,19 @@ const CategoryListPage = ({
                       {viewMode === 'grid' ? (
                         // Grid View
                         <>
-                          <div className="relative aspect-square overflow-hidden">
+                          {/* Image Container */}
+                          <div className="relative h-40 overflow-hidden">
                             <img
                               src={product['image-url']}
                               alt={product['product-title']}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                             {product['old-price'] !== product['new-price'] && (
-                              <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                                {calculateDiscount(parseInt(product['old-price']), parseInt(product['new-price']))}% OFF
+                              <div className="absolute top-2.5 left-2.5 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold">
+                                {calculateDiscount(
+                                  parseInt(product['old-price']),
+                                  parseInt(product['new-price'])
+                                )}% OFF
                               </div>
                             )}
                             <button
@@ -930,24 +934,36 @@ const CategoryListPage = ({
                                 e.stopPropagation();
                                 onAddToWishlist(product);
                               }}
-                              className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${
-                                isInWishlist(product)
+                              className={`absolute top-2.5 right-2.5 p-2 rounded-full transition-all duration-200 ${isInWishlist(product)
                                   ? 'bg-pink-500 text-white'
                                   : 'bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500'
-                              }`}
+                                }`}
                             >
-                              <svg className="w-4 h-4" fill={isInWishlist(product) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              <svg
+                                className="w-4 h-4"
+                                fill={isInWishlist(product) ? 'currentColor' : 'none'}
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                />
                               </svg>
                             </button>
                           </div>
-                          <div className="p-4">
-                            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-900 transition-colors">
+
+                          {/* Content */}
+                          <div className="p-3.5">
+                            <h3 className="font-semibold text-gray-900 mb-1.5 line-clamp-2 group-hover:text-blue-900 transition-colors text-[15px]">
                               {product['product-title']}
                             </h3>
-                            {/* Variant thumbnails (clicking behaves same as image: open details) */}
+
+                            {/* Variant thumbnails */}
                             {Array.isArray(product.raw?.classification?.variants) && product.raw.classification.variants.length > 0 && (
-                              <div className="mt-2 flex items-center gap-2 overflow-x-auto">
+                              <div className="mt-1.5 flex items-center gap-2 overflow-x-auto">
                                 {product.raw.classification.variants.slice(0, 6).map((v, vi) => {
                                   const thumb = Array.isArray(v.images) && v.images.length > 0 ? v.images[0] : null;
                                   if (!thumb) return null;
@@ -962,7 +978,9 @@ const CategoryListPage = ({
                                 })}
                               </div>
                             )}
-                            <div className="flex items-center justify-between mb-3">
+
+                            {/* Price */}
+                            <div className="flex items-center justify-between mb-2 mt-1.5">
                               <div className="flex items-center space-x-2">
                                 <span className="text-lg font-bold text-gray-900">
                                   {formatPrice(product['new-price'])}
@@ -974,12 +992,14 @@ const CategoryListPage = ({
                                 )}
                               </div>
                             </div>
+
+                            {/* Add to Cart Button */}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 onAddToCart(product);
                               }}
-                              className="w-full bg-blue-900 text-white py-2 px-4 rounded-lg hover:bg-blue-800 transition-colors font-medium"
+                              className="w-full bg-blue-900 text-white py-2 px-4 rounded-lg hover:bg-blue-800 transition-colors font-medium text-sm"
                             >
                               Add to Cart
                             </button>
@@ -1038,11 +1058,10 @@ const CategoryListPage = ({
                                 e.stopPropagation();
                                 onAddToWishlist(product);
                               }}
-                              className={`p-2 rounded-full transition-all duration-200 ${
-                                isInWishlist(product)
+                              className={`p-2 rounded-full transition-all duration-200 ${isInWishlist(product)
                                   ? 'bg-pink-500 text-white'
                                   : 'bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-500'
-                              }`}
+                                }`}
                             >
                               <svg className="w-4 h-4" fill={isInWishlist(product) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -1160,11 +1179,10 @@ const FilterPanel = ({
                 <button
                   key={threshold}
                   onClick={() => setPriceRange([minPrice, threshold])}
-                  className={`text-xs px-2.5 py-1 rounded-full border ${
-                    priceRange[0] === minPrice && priceRange[1] === threshold
+                  className={`text-xs px-2.5 py-1 rounded-full border ${priceRange[0] === minPrice && priceRange[1] === threshold
                       ? 'bg-blue-900 text-white border-blue-900'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-200'
-                  }`}
+                    }`}
                 >
                   Under {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(threshold)}
                 </button>
@@ -1172,11 +1190,10 @@ const FilterPanel = ({
             {/* Any */}
             <button
               onClick={() => setPriceRange([minPrice, maxPrice])}
-              className={`text-xs px-2.5 py-1 rounded-full border ${
-                priceRange[0] === minPrice && priceRange[1] === maxPrice
+              className={`text-xs px-2.5 py-1 rounded-full border ${priceRange[0] === minPrice && priceRange[1] === maxPrice
                   ? 'bg-blue-900 text-white border-blue-900'
                   : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-200'
-              }`}
+                }`}
             >
               Any
             </button>
@@ -1205,11 +1222,10 @@ const FilterPanel = ({
                 onChange={() => handleBrandToggle(brand)}
                 className="sr-only"
               />
-              <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                selectedBrands.includes(brand) 
-                  ? 'bg-blue-900 border-blue-900' 
+              <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedBrands.includes(brand)
+                  ? 'bg-blue-900 border-blue-900'
                   : 'border-gray-300'
-              }`}>
+                }`}>
                 {selectedBrands.includes(brand) && (
                   <Check className="w-3 h-3 text-white" />
                 )}
@@ -1241,11 +1257,10 @@ const FilterPanel = ({
                   onChange={() => handleProductTypeToggle(productType)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedProductTypes.includes(productType) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedProductTypes.includes(productType)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedProductTypes.includes(productType) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1270,11 +1285,10 @@ const FilterPanel = ({
                   onChange={() => handleSubcategoryToggle(subcategory)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedSubcategories.includes(subcategory) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedSubcategories.includes(subcategory)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedSubcategories.includes(subcategory) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1299,11 +1313,10 @@ const FilterPanel = ({
                   onChange={() => handleSubSubcategoryToggle(subSubcategory)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedSubSubcategories.includes(subSubcategory) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedSubSubcategories.includes(subSubcategory)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedSubSubcategories.includes(subSubcategory) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1328,11 +1341,10 @@ const FilterPanel = ({
                   onChange={() => handlePowerRangeToggle(powerRange)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedPowerRanges.includes(powerRange) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedPowerRanges.includes(powerRange)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedPowerRanges.includes(powerRange) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1357,11 +1369,10 @@ const FilterPanel = ({
                   onChange={() => handleColorToggle(color)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedColors.includes(color) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedColors.includes(color)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedColors.includes(color) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1386,11 +1397,10 @@ const FilterPanel = ({
                   onChange={() => handleSizeToggle(size)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedSizes.includes(size) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedSizes.includes(size)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedSizes.includes(size) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1415,11 +1425,10 @@ const FilterPanel = ({
                   onChange={() => handleMaterialToggle(material)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedMaterials.includes(material) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedMaterials.includes(material)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedMaterials.includes(material) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1444,11 +1453,10 @@ const FilterPanel = ({
                   onChange={() => handleCertificationToggle(certification)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedCertifications.includes(certification) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedCertifications.includes(certification)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedCertifications.includes(certification) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1473,11 +1481,10 @@ const FilterPanel = ({
                   onChange={() => handleWarrantyToggle(warranty)}
                   className="sr-only"
                 />
-                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-                  selectedWarranties.includes(warranty) 
-                    ? 'bg-blue-900 border-blue-900' 
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedWarranties.includes(warranty)
+                    ? 'bg-blue-900 border-blue-900'
                     : 'border-gray-300'
-                }`}>
+                  }`}>
                   {selectedWarranties.includes(warranty) && (
                     <Check className="w-3 h-3 text-white" />
                   )}
@@ -1504,9 +1511,8 @@ const FilterPanel = ({
                 onChange={() => setSelectedDiscountBucket(d)}
                 className="sr-only"
               />
-              <div className={`w-5 h-5 border-2 rounded-full flex items-center justify-center mr-3 ${
-                selectedDiscountBucket === d ? 'bg-blue-900 border-blue-900' : 'border-gray-300'
-              }`}>
+              <div className={`w-5 h-5 border-2 rounded-full flex items-center justify-center mr-3 ${selectedDiscountBucket === d ? 'bg-blue-900 border-blue-900' : 'border-gray-300'
+                }`}>
                 {selectedDiscountBucket === d && <Check className="w-3 h-3 text-white" />}
               </div>
               <span className="text-gray-700">{d === 0 ? 'Any' : `${d}% or more`}</span>
@@ -1524,9 +1530,8 @@ const FilterPanel = ({
             onChange={(e) => setShowOnlyDiscounted(e.target.checked)}
             className="sr-only"
           />
-          <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-            showOnlyDiscounted ? 'bg-blue-900 border-blue-900' : 'border-gray-300'
-          }`}>
+          <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${showOnlyDiscounted ? 'bg-blue-900 border-blue-900' : 'border-gray-300'
+            }`}>
             {showOnlyDiscounted && <Check className="w-3 h-3 text-white" />}
           </div>
           <span className="text-sm text-gray-700">On Sale Only</span>
@@ -1539,9 +1544,8 @@ const FilterPanel = ({
             onChange={(e) => setShowOnlyInStock(e.target.checked)}
             className="sr-only"
           />
-          <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${
-            showOnlyInStock ? 'bg-blue-900 border-blue-900' : 'border-gray-300'
-          }`}>
+          <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${showOnlyInStock ? 'bg-blue-900 border-blue-900' : 'border-gray-300'
+            }`}>
             {showOnlyInStock && <Check className="w-3 h-3 text-white" />}
           </div>
           <span className="text-sm text-gray-700">In Stock Only</span>
