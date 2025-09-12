@@ -174,21 +174,21 @@ function Root() {
         const categoryParam = rest[0] || '';
         const productId = rest[1] || '';
         const productSlug = rest[2] || '';
-      
+
         if (products.length) {
           const found = products.find(p => {
             const matchId = productId && (p.raw?.identifiers?.productId === productId || String(p.id) === productId);
             const matchSlug = (p.raw?.identifiers?.slug || slugify(p['product-title'])) === productSlug;
             return matchId && matchSlug;
           });
-      
+
           if (found) {
             setSelectedProduct(found);
             setShowProductDetailsPage(true);
           }
         }
         break;
-      }      
+      }
       case 'home':
       default:
         // Home/reset
@@ -794,15 +794,19 @@ function Root() {
 
                 {/* Content */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
                     {filteredProducts.map((product, index) => (
-                      <div key={`${product['product-title']}-${index}`} className="cursor-pointer">
+                      <div
+                        key={`${product['product-title']}-${index}`}
+                        className="cursor-pointer h-full"
+                      >
                         <ProductCard
                           product={product}
                           onAddToCart={handleAddToCart}
                           onAddToWishlist={handleAddToWishlist}
                           isFavorite={favorites.some((fav) => fav['product-title'] === product['product-title'])}
                           onOpenDetails={handleOpenProductDetailsPage}
+                          className="h-full flex flex-col" // <- ensure card fills height
                         />
                       </div>
                     ))}

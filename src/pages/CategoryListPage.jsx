@@ -898,35 +898,40 @@ const CategoryListPage = ({
                   <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setCurrentPage} />
                 </div>
 
-                <div className={viewMode === 'grid'
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols- gap-6 md:gap-8 lg:gap-10"
-                  : "space-y-4"
-                }>
+                <div
+                  className={
+                    viewMode === "grid"
+                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8 lg:gap-10 items-stretch"
+                      : "space-y-4"
+                  }
+                >
                   {pageProducts.map((product, index) => (
                     <div
                       key={index}
-                      className={viewMode === 'grid'
-                        ? "bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group cursor-pointer"
-                        : "bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer"
+                      className={
+                        viewMode === "grid"
+                          ? "bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group cursor-pointer h-full flex flex-col"
+                          : "bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer"
                       }
                       onClick={() => onOpenDetails && onOpenDetails(product)}
                     >
-                      {viewMode === 'grid' ? (
-                        // Grid View
+                      {viewMode === "grid" ? (
+                        // 🌟 Grid View
                         <>
                           {/* Image Container */}
                           <div className="relative h-40 overflow-hidden">
                             <img
-                              src={product['image-url']}
-                              alt={product['product-title']}
+                              src={product["image-url"]}
+                              alt={product["product-title"]}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
-                            {product['old-price'] !== product['new-price'] && (
+                            {product["old-price"] !== product["new-price"] && (
                               <div className="absolute top-2.5 left-2.5 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold">
                                 {calculateDiscount(
-                                  parseInt(product['old-price']),
-                                  parseInt(product['new-price'])
-                                )}% OFF
+                                  parseInt(product["old-price"]),
+                                  parseInt(product["new-price"])
+                                )}
+                                % OFF
                               </div>
                             )}
                             <button
@@ -935,13 +940,13 @@ const CategoryListPage = ({
                                 onAddToWishlist(product);
                               }}
                               className={`absolute top-2.5 right-2.5 p-2 rounded-full transition-all duration-200 ${isInWishlist(product)
-                                  ? 'bg-pink-500 text-white'
-                                  : 'bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500'
+                                  ? "bg-pink-500 text-white"
+                                  : "bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500"
                                 }`}
                             >
                               <svg
                                 className="w-4 h-4"
-                                fill={isInWishlist(product) ? 'currentColor' : 'none'}
+                                fill={isInWishlist(product) ? "currentColor" : "none"}
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
                               >
@@ -956,50 +961,60 @@ const CategoryListPage = ({
                           </div>
 
                           {/* Content */}
-                          <div className="p-3.5">
+                          <div className="p-3.5 flex flex-col flex-1">
                             <h3 className="font-semibold text-gray-900 mb-1.5 line-clamp-2 group-hover:text-blue-900 transition-colors text-[15px]">
-                              {product['product-title']}
+                              {product["product-title"]}
                             </h3>
 
                             {/* Variant thumbnails */}
-                            {Array.isArray(product.raw?.classification?.variants) && product.raw.classification.variants.length > 0 && (
-                              <div className="mt-1.5 flex items-center gap-2 overflow-x-auto">
-                                {product.raw.classification.variants.slice(0, 6).map((v, vi) => {
-                                  const thumb = Array.isArray(v.images) && v.images.length > 0 ? v.images[0] : null;
-                                  if (!thumb) return null;
-                                  return (
-                                    <div
-                                      key={vi}
-                                      className="w-8 h-8 rounded border border-gray-200 hover:border-blue-400 overflow-hidden flex-shrink-0"
-                                    >
-                                      <img src={thumb} alt={v.name || `variant-${vi}`} className="w-full h-full object-cover" />
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
+                            {Array.isArray(product.raw?.classification?.variants) &&
+                              product.raw.classification.variants.length > 0 && (
+                                <div className="mt-1.5 flex items-center gap-2 overflow-x-auto">
+                                  {product.raw.classification.variants
+                                    .slice(0, 6)
+                                    .map((v, vi) => {
+                                      const thumb =
+                                        Array.isArray(v.images) && v.images.length > 0
+                                          ? v.images[0]
+                                          : null;
+                                      if (!thumb) return null;
+                                      return (
+                                        <div
+                                          key={vi}
+                                          className="w-8 h-8 rounded border border-gray-200 hover:border-blue-400 overflow-hidden flex-shrink-0"
+                                        >
+                                          <img
+                                            src={thumb}
+                                            alt={v.name || `variant-${vi}`}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        </div>
+                                      );
+                                    })}
+                                </div>
+                              )}
 
                             {/* Price */}
                             <div className="flex items-center justify-between mb-2 mt-1.5">
                               <div className="flex items-center space-x-2">
                                 <span className="text-lg font-bold text-gray-900">
-                                  {formatPrice(product['new-price'])}
+                                  {formatPrice(product["new-price"])}
                                 </span>
-                                {product['old-price'] !== product['new-price'] && (
+                                {product["old-price"] !== product["new-price"] && (
                                   <span className="text-sm text-gray-500 line-through">
-                                    {formatPrice(product['old-price'])}
+                                    {formatPrice(product["old-price"])}
                                   </span>
                                 )}
                               </div>
                             </div>
 
-                            {/* Add to Cart Button */}
+                            {/* Add to Cart Button pinned bottom */}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 onAddToCart(product);
                               }}
-                              className="w-full bg-blue-900 text-white py-2 px-4 rounded-lg hover:bg-blue-800 transition-colors font-medium text-sm"
+                              className="w-full bg-blue-900 text-white py-2 px-4 rounded-lg hover:bg-blue-800 transition-colors font-medium text-sm mt-auto"
                             >
                               Add to Cart
                             </button>
@@ -1010,44 +1025,58 @@ const CategoryListPage = ({
                         <div className="flex items-center p-4 space-x-4">
                           <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
                             <img
-                              src={product['image-url']}
-                              alt={product['product-title']}
+                              src={product["image-url"]}
+                              alt={product["product-title"]}
                               className="w-full h-full object-cover"
                             />
-                            {product['old-price'] !== product['new-price'] && (
+                            {product["old-price"] !== product["new-price"] && (
                               <div className="absolute top-1 left-1 bg-red-500 text-white px-1 py-0.5 rounded text-xs font-semibold">
-                                {calculateDiscount(parseInt(product['old-price']), parseInt(product['new-price']))}%
+                                {calculateDiscount(
+                                  parseInt(product["old-price"]),
+                                  parseInt(product["new-price"])
+                                )}
+                                %
                               </div>
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-gray-900 mb-1 truncate">
-                              {product['product-title']}
+                              {product["product-title"]}
                             </h3>
-                            {/* Variant thumbnails (clicking behaves same as image: open details) */}
-                            {Array.isArray(product.raw?.classification?.variants) && product.raw.classification.variants.length > 0 && (
-                              <div className="mt-1 flex items-center gap-2 overflow-x-auto">
-                                {product.raw.classification.variants.slice(0, 6).map((v, vi) => {
-                                  const thumb = Array.isArray(v.images) && v.images.length > 0 ? v.images[0] : null;
-                                  if (!thumb) return null;
-                                  return (
-                                    <div
-                                      key={vi}
-                                      className="w-7 h-7 rounded border border-gray-200 hover:border-blue-400 overflow-hidden flex-shrink-0"
-                                    >
-                                      <img src={thumb} alt={v.name || `variant-${vi}`} className="w-full h-full object-cover" />
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
+                            {/* Variant thumbnails */}
+                            {Array.isArray(product.raw?.classification?.variants) &&
+                              product.raw.classification.variants.length > 0 && (
+                                <div className="mt-1 flex items-center gap-2 overflow-x-auto">
+                                  {product.raw.classification.variants
+                                    .slice(0, 6)
+                                    .map((v, vi) => {
+                                      const thumb =
+                                        Array.isArray(v.images) && v.images.length > 0
+                                          ? v.images[0]
+                                          : null;
+                                      if (!thumb) return null;
+                                      return (
+                                        <div
+                                          key={vi}
+                                          className="w-7 h-7 rounded border border-gray-200 hover:border-blue-400 overflow-hidden flex-shrink-0"
+                                        >
+                                          <img
+                                            src={thumb}
+                                            alt={v.name || `variant-${vi}`}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        </div>
+                                      );
+                                    })}
+                                </div>
+                              )}
                             <div className="flex items-center space-x-3 mb-2">
                               <span className="text-lg font-bold text-gray-900">
-                                {formatPrice(product['new-price'])}
+                                {formatPrice(product["new-price"])}
                               </span>
-                              {product['old-price'] !== product['new-price'] && (
+                              {product["old-price"] !== product["new-price"] && (
                                 <span className="text-sm text-gray-500 line-through">
-                                  {formatPrice(product['old-price'])}
+                                  {formatPrice(product["old-price"])}
                                 </span>
                               )}
                             </div>
@@ -1059,12 +1088,22 @@ const CategoryListPage = ({
                                 onAddToWishlist(product);
                               }}
                               className={`p-2 rounded-full transition-all duration-200 ${isInWishlist(product)
-                                  ? 'bg-pink-500 text-white'
-                                  : 'bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-500'
+                                  ? "bg-pink-500 text-white"
+                                  : "bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-500"
                                 }`}
                             >
-                              <svg className="w-4 h-4" fill={isInWishlist(product) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              <svg
+                                className="w-4 h-4"
+                                fill={isInWishlist(product) ? "currentColor" : "none"}
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                />
                               </svg>
                             </button>
                             <button
@@ -1180,8 +1219,8 @@ const FilterPanel = ({
                   key={threshold}
                   onClick={() => setPriceRange([minPrice, threshold])}
                   className={`text-xs px-2.5 py-1 rounded-full border ${priceRange[0] === minPrice && priceRange[1] === threshold
-                      ? 'bg-blue-900 text-white border-blue-900'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-200'
+                    ? 'bg-blue-900 text-white border-blue-900'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-200'
                     }`}
                 >
                   Under {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(threshold)}
@@ -1191,8 +1230,8 @@ const FilterPanel = ({
             <button
               onClick={() => setPriceRange([minPrice, maxPrice])}
               className={`text-xs px-2.5 py-1 rounded-full border ${priceRange[0] === minPrice && priceRange[1] === maxPrice
-                  ? 'bg-blue-900 text-white border-blue-900'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-200'
+                ? 'bg-blue-900 text-white border-blue-900'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-200'
                 }`}
             >
               Any
@@ -1223,8 +1262,8 @@ const FilterPanel = ({
                 className="sr-only"
               />
               <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedBrands.includes(brand)
-                  ? 'bg-blue-900 border-blue-900'
-                  : 'border-gray-300'
+                ? 'bg-blue-900 border-blue-900'
+                : 'border-gray-300'
                 }`}>
                 {selectedBrands.includes(brand) && (
                   <Check className="w-3 h-3 text-white" />
@@ -1258,8 +1297,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedProductTypes.includes(productType)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedProductTypes.includes(productType) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1286,8 +1325,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedSubcategories.includes(subcategory)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedSubcategories.includes(subcategory) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1314,8 +1353,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedSubSubcategories.includes(subSubcategory)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedSubSubcategories.includes(subSubcategory) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1342,8 +1381,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedPowerRanges.includes(powerRange)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedPowerRanges.includes(powerRange) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1370,8 +1409,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedColors.includes(color)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedColors.includes(color) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1398,8 +1437,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedSizes.includes(size)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedSizes.includes(size) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1426,8 +1465,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedMaterials.includes(material)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedMaterials.includes(material) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1454,8 +1493,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedCertifications.includes(certification)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedCertifications.includes(certification) && (
                     <Check className="w-3 h-3 text-white" />
@@ -1482,8 +1521,8 @@ const FilterPanel = ({
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 ${selectedWarranties.includes(warranty)
-                    ? 'bg-blue-900 border-blue-900'
-                    : 'border-gray-300'
+                  ? 'bg-blue-900 border-blue-900'
+                  : 'border-gray-300'
                   }`}>
                   {selectedWarranties.includes(warranty) && (
                     <Check className="w-3 h-3 text-white" />
