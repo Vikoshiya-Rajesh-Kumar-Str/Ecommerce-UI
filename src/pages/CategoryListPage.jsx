@@ -34,20 +34,20 @@ const CategoryListPage = ({
   }, []);
 
   // Ensure subcategory filter is visible when arriving on category page
-  React.useEffect(() => {
-    // Auto-open filters on mobile and scroll to subcategory section
-    if (!isDesktop) {
-      setShowFilters(true);
-    }
-    const id = window.setTimeout(() => {
-      try {
-        if (subcategorySectionRef.current) {
-          subcategorySectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      } catch (_) { }
-    }, 150);
-    return () => window.clearTimeout(id);
-  }, [isDesktop]);
+  // React.useEffect(() => {
+  //   // Auto-open filters on mobile and scroll to subcategory section
+  //   if (!isDesktop) {
+  //     setShowFilters(true);
+  //   }
+  //   const id = window.setTimeout(() => {
+  //     try {
+  //       if (subcategorySectionRef.current) {
+  //         subcategorySectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //       }
+  //     } catch (_) { }
+  //   }, 150);
+  //   return () => window.clearTimeout(id);
+  // }, [isDesktop]);
 
   // Derived prices
   const allPrices = React.useMemo(() => products.map(p => parseInt(p['new-price']) || 0).filter(n => !isNaN(n)), [products]);
